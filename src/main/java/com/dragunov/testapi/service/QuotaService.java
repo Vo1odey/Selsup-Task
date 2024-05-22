@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class QuotaService {
 
     @Value("${request.limit}")
-    private int requestQuotaSecond;
+    private int requestQuota;
 
     @Value("${time-second.unit}")
     private int timeUnitSecond;
@@ -25,9 +25,9 @@ public class QuotaService {
             client.setStatus(Status.READY);
             client.setAvailableTimeForRequests(LocalDateTime.now().plusSeconds(timeUnitSecond));
             client.setRequestCount(0);
-            log.info("available requests for ip: {} - {}", client.getClientIp(), requestQuotaSecond);
+            log.info("available requests for ip: {} - {}", client.getClientIp(), requestQuota);
         }
-        if (client.getRequestCount() == requestQuotaSecond) {
+        if (client.getRequestCount() == requestQuota) {
             client.setStatus(Status.CLOSED);
         }
     }

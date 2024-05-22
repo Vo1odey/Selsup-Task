@@ -1,1 +1,7 @@
-spring.application.name=Test-Api
+spring:
+  application:
+    name: Test-Api
+time-second:
+  unit: 30
+request:
+  limit: 3
