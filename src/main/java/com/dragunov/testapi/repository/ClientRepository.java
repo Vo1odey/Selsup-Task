@@ -16,8 +16,6 @@ public class ClientRepository {
     }
 
     public Optional<Client> get(String clientIp) {
-        Client empty = new Client();
-        empty.setClientIp("0");
         return clients.stream()
                 .filter(client -> client.getClientIp().equals(clientIp)).findFirst();
     }
