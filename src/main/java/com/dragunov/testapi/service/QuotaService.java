@@ -19,21 +19,29 @@ public class QuotaService {
     @Value("${time-second.unit}")
     private int timeUnitSecond;
 
-    public void checkQuota(Client client) {
-        if (client.getAvailableTimeForRequests().isBefore(LocalDateTime.now())) {
-            log.info("quota for ip: {} granted", client.getClientIp());
+    private boolean isAvailableRequestTime(Client client) {
+        return client.getAvailableTimeForRequests().isBefore(LocalDateTime.now());
+    }
+
+    public void checkStatus(Client client) {
+        if (isAvailableRequestTime(client)) {
+            log.info("request for ip {} is open", client.getClientIp());
             client.setStatus(Status.READY);
             client.setAvailableTimeForRequests(LocalDateTime.now().plusSeconds(timeUnitSecond));
             client.setRequestCount(0);
-            log.info("available requests for ip: {} - {}", client.getClientIp(), requestQuota);
         }
-        if (client.getRequestCount() == requestQuota) {
-            client.setStatus(Status.CLOSED);
-        }
+    }
+
+    private boolean isClosed(Client client) {
+        return client.getRequestCount() == requestQuota;
     }
 
     public void addRequestCount(Client client) {
         client.setRequestCount(client.getRequestCount() + 1);
-        checkQuota(client);
+        log.info("client request count: {}", client.getRequestCount());
+        if (isClosed(client)) {
+            log.info("request for ip {} is closed", client.getClientIp());
+            client.setStatus(Status.CLOSED);
+        }
     }
 }
