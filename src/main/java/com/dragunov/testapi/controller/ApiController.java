@@ -33,9 +33,9 @@ public class ApiController {
         if (client.getStatus().equals(Status.CLOSED)) {
             quotaService.checkQuota(client);
             return ResponseEntity.badRequest().body("Request quota is end");
-        } else {
-            quotaService.addRequestCount(client);
-            return ResponseEntity.ok("Document: " + document + "\n" + "Signature: " + signature);
         }
+        quotaService.addRequestCount(client);
+        return ResponseEntity.ok("Document: " + document + "\n" + "Signature: " + signature);
+
     }
 }
