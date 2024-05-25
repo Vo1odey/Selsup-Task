@@ -29,13 +29,12 @@ public class ApiController {
     public ResponseEntity<String> createDocument(HttpServletRequest req, @RequestBody DocumentDto document, @RequestHeader String signature) {
         String ip = webService.getClientIp(req);
         Client client = clientService.getOrSaveClient(ip);
-        clientService.updateClient(client, client);
         if (client.getStatus().equals(Status.CLOSED)) {
-            quotaService.checkQuota(client);
+            quotaService.checkStatus(client);
             return ResponseEntity.badRequest().body("Request quota is end");
         }
+        quotaService.checkStatus(client);
         quotaService.addRequestCount(client);
         return ResponseEntity.ok("Document: " + document + "\n" + "Signature: " + signature);
-
     }
 }
